@@ -112,4 +112,26 @@ Edge will be reported at `fee_bps ∈ {0, 3, 7.2, 15, 30}` for every rule, regar
 
 ## Amendments
 
-(None yet. Each amendment is a dated subsection appended below, referencing the section it modifies. Original values above are not edited.)
+Each amendment is a dated subsection appended below, referencing the section it modifies. Original values above are not edited.
+
+### Amendment 2026-04-19 — Observation horizons (§3): per-model to match verified-prediction hold_days
+
+**What changes.** The originally pre-registered horizon set `{+1h, +3h, +6h}` is replaced with **per-model horizons matching each in-scope model's `hold_days`** as observed in `predictions_log.json`. No horizon is added or removed post-hoc to favour any rule.
+
+**Revised horizons (in-scope models only):**
+
+| Model | hold_days | PM horizon tested |
+|-------|----------:|-------------------|
+| A3_relief_rocket | 0 | +6h (intraday proxy; PM binaries rarely settle open→close) |
+| A1_tariff_bearish | 1 | +24h |
+| C1_burst_silence | 1 | +24h |
+| C3_night_alert | 1 | +24h |
+| B1_triple_signal | 3 | +72h |
+
+**Rationale.** The original horizons `{+1h, +3h, +6h}` come from the trump-code README architecture diagram's real-time-engine tracking line. Day 2 replication revealed that the verified predictions underlying the headline 61.3% hit rate are evaluated at `hold_days` horizons (0–3 trading days), not at the real-time tracking horizons. Testing a 3-day-hold rule at a 1-hour Polymarket horizon would measure PM response at the wrong timescale and produce an uninformative null, biasing the experiment against the hypothesis for reasons unrelated to whether the signal exists. Matching each model to its own verification horizon is the correct test.
+
+**Multiple-testing accounting.** Original design: 5 in-scope models × 10 binaries × 3 horizons = 150 cells. Revised design: 5 in-scope models × 10 binaries × 1 horizon-per-model = 50 cells. The Bonferroni divisor becomes 50, not 150. This reduction is earned by matching each model to its own horizon, not cherry-picked post-hoc.
+
+**Thresholds unchanged.** Hit rate ≥55%, net fee-adjusted edge ≥2% at fee_bps=7.2, baseline margin ≥5pp, n≥15, Bonferroni-corrected p<0.05/n_tests, reverse-direction asymmetry, temporal stability <10pp. The 2% net-edge threshold applies at each model's horizon; longer horizons permit larger PM moves and thus longer-horizon models have a mechanically easier path to 2%, which is acknowledged here but not adjusted (the threshold is against *net* edge after fees, which already dominates the decision at practical Polymarket fee levels).
+
+**No other changes to the pre-registration.** Rules in scope, binary-selection criteria, reporting commitment, non-goals, and survival thresholds remain as originally committed.
