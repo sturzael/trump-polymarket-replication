@@ -47,13 +47,16 @@ Every item below is tagged **[BLOCKING]** (the experiment cannot produce a defen
 
 - Fill in `PRE_REGISTRATION.md`:
   - Paste the 8 named rules verbatim from trump-code README key-discoveries table.
-  - Look up each rule's ID in `surviving_rules.json` and record.
+  - Map each discovery to its corresponding model_id in `predictions_log.json` (the source of the verified 61.3% hit rate). Note: the plan originally referenced `surviving_rules.json` — Day 1 schema inspection found the 8 discoveries map to the 11-model `predictions_log.json` system, not the 600-rule brute-force survivor list. Rationale documented in PRE_REGISTRATION.md §1 schema note.
+  - Record per-model verified-n and verified hit rate from their data.
+  - Flag discoveries #3 (China weighting) and #4 (TS-before-X lag) as out-of-scope (no standalone predictor).
+  - Flag models with n<15 verified predictions pre-filter as likely UNDERPOWERED.
   - Record fixed thresholds: hit rate ≥55%, net fee-adjusted edge ≥2%.
   - Record fixed horizons: +1h, +3h, +6h.
-  - Record commitment to report all 8 rules × all binaries, not only positive results.
+  - Record commitment to report all in-scope rules × all binaries, not only positive results.
   - Record non-goals block (above).
 - Git-commit the completed file. Commit timestamp becomes the pre-registration timestamp.
-- **Blocking gate:** no SII queries, no Polymarket API calls, no price data access before this commit lands.
+- **Blocking gate:** no SII queries, no Polymarket API calls, no price data access before this commit lands. (Exception: Day 1 read-only fetch of their public `predictions_log.json` and `surviving_rules.json` from GitHub is permitted for schema inspection; these are their publicly-published reference files, not Polymarket price data.)
 
 ### Day 2 — Sanity replication on their S&P data [BLOCKING — item 14]
 

@@ -10,20 +10,32 @@
 
 ## 1. Rules under test (the 8 named discoveries)
 
-Verbatim from the trump-code README key-discoveries table. Rule IDs cross-referenced against `surviving_rules.json` (TODO Day 1).
+Verbatim from the trump-code README key-discoveries table. Mapped to `predictions_log.json` model_ids (see Day 1 schema note below for why this file, not `surviving_rules.json`).
 
-| # | Rule | Their published evidence | Their published impact | surviving_rules.json ID |
-|---|------|--------------------------|------------------------|--------------------------|
-| 1 | Pre-market RELIEF = strongest buy signal | Apr 9, 2025: S&P +9.52% | Avg +1.12% same-day | TODO Day 1 |
-| 2 | TARIFF→SHORT is 70% wrong | Circuit breaker analysis | Auto-reversed to LONG | TODO Day 1 |
-| 3 | China signals hidden on Truth Social only | 203 TS posts / 0 on X | 1.5x weight boost | TODO Day 1 |
-| 4 | Truth Social publishes 6.2h before X | 38/39 posts matched | 6-hour trading window | TODO Day 1 |
-| 5 | Pure tariff day = most dangerous | Apr 3: -4.84%, Apr 4: -5.97% | Avg -1.057% | TODO Day 1 |
-| 6 | 4 signals combo = most profitable | 12 occurrences, 66.7% up | Avg +2.792% | TODO Day 1 |
-| 7 | Silence = 80% bullish | Zero-post days analysis | Avg +0.409% | TODO Day 1 |
-| 8 | Late-night tariff tweets = anti-indicator | 62% wrong → reverse = 62% right | Auto-inverted | TODO Day 1 |
+| # | Discovery (verbatim from their README) | Their published evidence | Their published impact | `predictions_log.json` model_id | Their verified n | Their verified hit rate | Status for Phase 0 |
+|---|----------------------------------------|--------------------------|------------------------|----------------------------------|------------------|--------------------------|---------------------|
+| 1 | Pre-market RELIEF = strongest buy signal | Apr 9, 2025: S&P +9.52% | Avg +1.12% same-day | `A3_relief_rocket` | 11 | 72.7% | **Pre-filter underpowered** (n<15 before binary alignment) |
+| 2 | TARIFF→SHORT is 70% wrong | Circuit breaker analysis | Auto-reversed to LONG | `A1_tariff_bearish` | 23 | 56.5% | In scope |
+| 3 | China signals hidden on Truth Social only | 203 TS posts / 0 on X | 1.5x weight boost | (no model — weighting rule) | — | — | **Out of Phase 0 scope** (not a standalone predictor) |
+| 4 | Truth Social publishes 6.2h before X | 38/39 posts matched | 6-hour trading window | (no model — timing observation) | — | — | **Out of Phase 0 scope** (corpus-timing finding, not a predictor) |
+| 5 | Pure tariff day = most dangerous | Apr 3: -4.84%, Apr 4: -5.97% | Avg -1.057% | `A1_tariff_bearish` (shared with #2) | 23 | 56.5% | In scope (tested via the same model) |
+| 6 | 4 signals combo = most profitable | 12 occurrences, 66.7% up | Avg +2.792% | `B1_triple_signal` | 17 | 64.7% | In scope |
+| 7 | Silence = 80% bullish | Zero-post days analysis | Avg +0.409% | `C1_burst_silence` | 176 | 65.3% | In scope |
+| 8 | Late-night tariff tweets = anti-indicator | 62% wrong → reverse = 62% right | Auto-inverted | `C3_night_alert` | 8 | 37.5% (62.5% reversed) | **Pre-filter underpowered** (n<15 before binary alignment) |
+
+**Effective test set for Phase 0:** 6 in-scope discoveries mapped to 5 unique models (`A3_relief_rocket`, `A1_tariff_bearish`, `B1_triple_signal`, `C1_burst_silence`, `C3_night_alert`). Two discoveries (#3, #4) have no standalone predictor model to replicate and are marked out-of-scope. Two models (`A3_relief_rocket`, `C3_night_alert`) are already below the n≥15 minimum before Polymarket-binary overlap filtering further reduces usable n, and will almost certainly be marked UNDERPOWERED in the verdict. Reported regardless, not silently dropped.
 
 **Locked before any Polymarket price access.** No rules will be added during Phase 0. No rules will be silently dropped; underpowered rules (n<15 observations) are marked UNDERPOWERED in the verdict, not excluded from reporting.
+
+### Day 1 schema note
+
+The plan as originally written instructed the Day 1 operator to look up rule IDs in `surviving_rules.json`. Inspection on Day 1 revealed that `surviving_rules.json` (600 composite-ID rules from the 31.5M-model brute-force search) is not the file that produced the headline 61.3% hit rate. The 564 verified predictions underlying the claim come from `predictions_log.json`, which is populated by **11 named models** operating at prediction time. The 8 named discoveries map to this 11-model system, not to the 600-rule survivor list. Pre-registration therefore uses `predictions_log.json` model_ids.
+
+Independent verification: the overall verified hit rate computed locally from `predictions_log.json` is 61.35%, matching their published 61.3% to two decimal places. This is consistent with `predictions_log.json` being the correct source. It does not independently validate the claim; see Day 2 (sanity replication) and Day 3 (lag audit) for the structural checks.
+
+One model in `predictions_log.json` (`D2_sig_change`, direction=VOLATILE, n=80, 70.0% hit) predicts magnitude not direction and is not mappable to a directional PM binary even if it were in the named-8 scope; out-of-scope for Phase 0 regardless.
+
+Five other models in `predictions_log.json` (`A2_deal_bullish`, `B2_tariff_to_deal`, `B3_action_pre`, `C2_brag_top`, `D3_volume_spike`) are not among the 8 named discoveries and per the non-goal against scope expansion are excluded from Phase 0 testing.
 
 ---
 
