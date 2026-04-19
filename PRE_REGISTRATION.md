@@ -52,9 +52,63 @@ Five other models in `predictions_log.json` (`A2_deal_bullish`, `B2_tariff_to_de
 
 ### Selected binaries
 
-(Populated Day 4 via amendment. Entries: slug + condition_id + overlap count.)
+Populated Day 4. Entries below are frozen before any price-series access (Day 5). See also "Amendment 2026-04-19 — Binary selection (§2): selection methodology and TVL-proxy caveat" below.
 
-TODO Day 4.
+| # | Slug | conditionId | Category | Signal events¹ | TVL proxy² ($) | Overlap days |
+|---|------|-------------|----------|---------------:|---------------:|-------------:|
+| 1 | `will-israel-annex-syrian-territory-before-july` | `0x04cba107396183f9f85bbbe6bb2e2b03f3e41aefd77cd957f1aaeb3d64f9f3e7`³ | iran_israel | 235 | 103,757 | 414 |
+| 2 | `us-iran-nuclear-deal-before-2027` | `0x182390641d3b...`³ | iran_israel | 60 | 216,035 | 127 |
+| 3 | `zelenskyy-out-as-ukraine-president-before-2027` | `0x51f624dbbf14...`³ | russia_ukraine | 110 | 936,822 | 231 |
+| 4 | `ukraine-joins-nato-before-2027` | `0x48c2b06383f2...`³ | russia_ukraine | 60 | 339,859 | 127 |
+| 5 | `will-xi-jinping-win-the-nobel-peace-prize-in-2026` | `0x7f347ed73325...`³ | china | 70 | 372,388 | 147 |
+| 6 | `china-x-taiwan-military-clash-before-2027` | `0x4c80df6f557b...`³ | china | 57 | 478,863 | 119 |
+| 7 | `will-donald-trump-win-the-nobel-peace-prize-in-2026-382` | `0x962e5b226a77...`³ | nobel_trump | 70 | 1,043,568 | 147 |
+| 8 | `will-trump-resign-by-december-31-2026` | `0x448f73e89890...`³ | trump_action | 110 | 189,792 | 230 |
+| 9 | `will-trump-pardon-ghislaine-maxwell` | `0x0dc45815251a...`³ | trump_action | 111 | 238,333 | 232 |
+| 10 | `will-trump-be-impeached-by-december-31-2026` | `0x4c8ceef9b9c0...`³ | trump_action | 110 | 304,495 | 230 |
+
+¹ Number of in-scope verified predictions (models A1/A3/B1/C1/C3) whose `date_signal` falls within the market's [startDate, endDate] active window.
+² TVL proxy = `lifetime_volume × signal_window_overlap_share`. See caveat in amendment below.
+³ Full conditionIds are stored in `data/phase0_selected_binaries.json`. Shortened here for readability only; full values are the authoritative reference for Day 5 price pulls.
+
+**Category distribution:**
+- iran_israel: 2
+- russia_ukraine: 2
+- china: 2
+- nobel_trump: 1
+- trump_action: 3
+
+Total: 10 binaries, all within $100k–$1.05M TVL proxy band.
+
+### Day 4 selection log
+
+Candidate pipeline:
+- 2,251 Polymarket markets with political slug + signal-window overlap initially identified
+- 287 after Tier-1 signal-responsive keyword filter and $50k minimum lifetime volume
+- 117 after requiring ≥60 days overlap with signal window and resolution in Feb-2025 to Dec-2026 range
+- 60 after restricting TVL proxy to $100k–$3M and requiring ≥50 in-scope signal events
+- **10 selected** via diversification across 5 categories, staying within $100k–$1.05M TVL proxy band
+
+Markets considered but rejected:
+- All `will-trump-nominate-X-as-fed-chair` variants: same neg-risk basket (move together); including multiple would not add independent observations
+- `putin-out-before-2027`, `will-the-supreme-court-rule-in-favor-of-trumps-tariffs`: TVL proxy above $1M band ceiling
+- 2028 presidential-candidate long-tail markets: excluded at Tier-1 as resolution horizon too distant to respond to short-term posts
+- Fed-rate-cut-count markets (`will-11-fed-rate-cuts-happen-in-2026` etc.): considered but dropped in favour of Ukraine NATO for category diversification (Fed category was already well-covered by proxy-based logic; dropping it does not leave a signal-type uncovered since Trump-Fed posts most strongly move the chair-nomination basket, which was excluded for being above the TVL ceiling).
+
+### Amendment 2026-04-19 — Binary selection (§2): selection methodology and TVL-proxy caveat
+
+**What was not possible in-budget.** The pre-registered criterion calls for TVL measured "at the time of each overlapping signal fire." Accurate signal-window TVL requires aggregating Polymarket trade records during 2025-01-23 to 2026-03-13 per market. Polymarket's `data-api/trades` endpoint does not support server-side timestamp filtering (all tested parameter variants returned the latest trades regardless) and client-side pagination is capped at `offset=5000`. For markets with >5,000 lifetime trades (which includes several of our selections), we cannot reach signal-window trades via pagination. Downloading SII (954M rows, 107 GB) is also out-of-budget.
+
+**Substitute used.** TVL proxy = `lifetime_volume × (signal_window_overlap_days / total_active_days)`. This assumes uniform volume distribution across a market's active window, which is false in general (political markets cluster volume near resolution events and news catalysts). The proxy therefore has potentially-asymmetric error: it can over-estimate signal-window TVL for markets with post-signal-window catalyst-driven volume spikes, or under-estimate for markets that peaked during signal window.
+
+**Mitigation.** The $100k–$1M band is the *proxy* band. Actual signal-window TVL per market could fall outside this band in either direction. Two consequences for the verdict:
+- If a market's true signal-window TVL was materially below $100k, observed price responses may reflect low-depth slippage artifacts rather than market consensus, and Day 6 measurements on that market should be flagged as potentially unreliable.
+- If a market's true signal-window TVL was materially above $1M, that is not a validity threat — deeper liquidity reduces noise. No correction needed.
+- The Day 6 core measurement remains valid as a pre-registered test of the rule set against this binary universe, regardless of proxy inaccuracy.
+
+**Binary list frozen.** Despite the proxy limitation, the binary list is committed as of this amendment timestamp and will not be revised after Day 5 price data is accessed. Markets cannot be swapped mid-experiment for better-looking ones; that would recreate selection bias. The list stands.
+
+**No other changes to the pre-registration.** Rules, horizons (per Day 2 amendment), thresholds, reporting commitment, and non-goals are unchanged.
 
 ---
 
