@@ -2,6 +2,8 @@
 
 **A pre-registered replication study testing whether the sstklen/trump-code signal set — claimed 61.3% hit rate on S&P 500 direction from Truth Social posts across 564 verified predictions — produces tradeable edge on Polymarket mid-TVL political binaries.**
 
+> 👉 **Not a markets person?** Read the [Explain Like I'm Five version](docs/ELI5.md) instead.
+
 ---
 
 ## Abstract
