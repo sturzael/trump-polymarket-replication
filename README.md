@@ -1,14 +1,44 @@
-# Out-of-Venue Translation of a Published Equity-Signal Claim
+# We Replicated a Viral "61% Hit Rate from Trump Tweets" Claim on Polymarket. Verdict: **KILL.**
 
-**A pre-registered replication study testing whether the sstklen/trump-code signal set — claimed 61.3% hit rate on S&P 500 direction from Truth Social posts across 564 verified predictions — produces tradeable edge on Polymarket mid-TVL political binaries.**
+**A pre-registered replication of [sstklen/trump-code](https://github.com/sstklen/trump-code) — the open-source project claiming 61.3% hit rate on S&P 500 direction from Truth Social posts across 564 verified predictions. We reproduced the 61.3% number exactly. Then we tested whether those signals translate to tradeable Polymarket edge. Zero cells cleared the pre-registered 7-gate test.**
+
+**Structured as a 9-phase study (Day 0–9 = nine logical phases with kill gates, not nine calendar days). Actual elapsed wall-clock: ~2 days, April 2026.**
 
 > 👉 **Not a markets person?** Read the [Explain Like I'm Five version](docs/ELI5.md) instead.
 
 ---
 
+## TL;DR
+
+- **We reproduced their 61.3% claim exactly** (our calculation: 61.35%) — their schema is readable, their math checks out
+- **~26% of that hit rate is lag-contaminated** (reporting-not-predicting) under our Day 3 worst-case test — below the 30% kill threshold, but borderline
+- **On 100 pre-committed cells** (5 rules × 10 Polymarket political binaries × 2 direction conventions), **zero cleared all seven survival gates**
+- The two binding constraints (n ≥ 15 and hit rate ≥ 55%) are **mutually unsatisfiable** on this dataset
+- **Verdict: KILL.** One rule (`B1_triple_signal`) was underpowered-not-falsified and is flagged as the only Phase 1 candidate if the work is pursued
+- Entire study: 9 logical phases (Day 0–9), 12 commits, ~2 days of actual wall-clock work, public audit trail
+
+---
+
+## Key numbers
+
+| What | Value |
+|------|-------|
+| Their published hit rate | **61.3%** |
+| Our independent reproduction | **61.35%** (matches to 2 decimals) |
+| In-scope models tested | **5** (mapped from the 8 "key discoveries") |
+| Polymarket binaries tested | **10** (diversified across 5 categories, $100k–$1M TVL band) |
+| Pre-committed survival gates | **7** (n / hit rate / margin / net edge / Bonferroni / reverse-direction / temporal stability) |
+| Cells clearing all 7 gates | **0 of 100** |
+| Cells clearing the n-gate (≥15) | 20 (all C1_burst_silence × binary) |
+| Cells clearing the hit-gate (≥55%) | **0** |
+| Lag contamination (aggregate in-scope) | 25.9% vs 30% kill threshold |
+| Polymarket political-market base fees | **0 bps** empirically (across 16 sampled markets) |
+
+---
+
 ## Abstract
 
-This repository documents a ten-day pre-registered replication study. The target claim is public: [sstklen/trump-code](https://github.com/sstklen/trump-code) reports a 61.3% hit rate across 564 verified predictions from 11 named models operating on Trump's Truth Social posts to predict S&P 500 direction at 1–3 day horizons. The experimental question is whether those signals translate to tradeable edge on Polymarket mid-TVL political binaries active during the same prediction window (2025-01-23 to 2026-03-13).
+This repository documents a pre-registered replication study structured as nine logical phases (Day 0–9) with kill gates between them. Actual elapsed wall-clock was ~2 days in April 2026; the "day" labels refer to phase order, not calendar time. The target claim is public: [sstklen/trump-code](https://github.com/sstklen/trump-code) reports a 61.3% hit rate across 564 verified predictions from 11 named models operating on Trump's Truth Social posts to predict S&P 500 direction at 1–3 day horizons. The experimental question is whether those signals translate to tradeable edge on Polymarket mid-TVL political binaries active during the same prediction window (2025-01-23 to 2026-03-13).
 
 Five rules from the eight named discoveries were mapped to predictor models and tested against ten political binaries selected via pre-committed TVL and category-diversification criteria. The full set of seven pre-committed survival gates — n ≥ 15, hit rate ≥ 55%, baseline margin ≥ 5 pp, net edge ≥ 2% at fee_bps=7.2, Bonferroni-corrected p < 0.05 against 100 tests, reverse-direction asymmetry ≥ 5 pp, temporal stability < 10 pp — was not cleared by any of the 100 tested cells. The verdict is **KILL**; continuation to a Phase 1 dedicated test is not authorised on this rule set and binary universe.
 
@@ -94,7 +124,7 @@ Before any Polymarket price data was accessed, [`PRE_REGISTRATION.md`](PRE_REGIS
 
 The binary list was frozen in a timestamped amendment after Day 4 and not revised after Day 5 price access.
 
-### Ten-day schedule with kill gates
+### Nine-phase schedule with kill gates (Day 0–9 = phase labels, not calendar days)
 
 See [`PHASE_0_PLAN.md`](PHASE_0_PLAN.md).
 
@@ -173,7 +203,7 @@ None of these is venue expansion away from Polymarket. The signal-capture questi
 All code is MIT-licensed and runnable against the public inputs listed above. Raw data is gitignored; collectors are included and data is regenerable.
 
 - [`PRE_REGISTRATION.md`](PRE_REGISTRATION.md) — pre-registered rules, binaries, thresholds, non-goals, amendment log.
-- [`PHASE_0_PLAN.md`](PHASE_0_PLAN.md) — 10-day schedule with blocking/non-blocking tagging and kill gates.
+- [`PHASE_0_PLAN.md`](PHASE_0_PLAN.md) — nine-phase schedule (Day 0–9) with blocking/non-blocking tagging and kill gates.
 - [`RISKS.md`](RISKS.md) — five specific failure modes with committed mitigations.
 - [`PHASE_0_VERDICT.md`](PHASE_0_VERDICT.md) — single-page decision.
 - [`COUNTER_MEMO.md`](COUNTER_MEMO.md) — adversarial review written before the verdict.
@@ -226,3 +256,21 @@ sstklen (2026). Trump-Code: AI-powered cryptanalysis of presidential communicati
 ## Disclosure
 
 No capital was deployed. No trading was conducted. All findings are based on observation of public trump-code data, public Polymarket metadata and price history, and the pre-registered measurement pipeline described above. The replication uses trump-code's published classifications as-is; the authors make no claim about the signal's validity on S&P 500 data beyond confirming that the published hit rate reproduces from the published inputs under the schema discovered on Day 2. No affiliation with Truth Social, Polymarket, sstklen, or any financial regulatory authority.
+
+---
+
+## Related studies
+
+This is part of a three-repo portfolio on solo-operator trading research:
+
+| Repo | Question | Verdict |
+|------|----------|---------|
+| [`polymarket-edge-research`](https://github.com/sturzael/polymarket-edge-research) | Does retail edge exist on Polymarket at $1k bankroll across 10 candidate strategies? | KILL (all 10 falsified) + durable tooling |
+| **`trump-polymarket-replication`** (this repo) | Does a claimed 61.3% Trump-tweet→S&P signal translate to Polymarket? | KILL — 0 of 100 cells cleared the 7-gate test |
+| [`polymarket-ai-edge`](https://github.com/sturzael/polymarket-ai-edge) | Is there retail edge on Polymarket's AI markets? | Pre-registration complete; forward observation not yet begun |
+
+All three share methodology DNA: pre-registration before data access, ÷5 heuristic on edge estimates, counter-memo before verdict, git log as audit trail.
+
+---
+
+**Star ⭐ this repo if you've ever seen a viral "AI beats the market" claim and wondered whether it holds up. This is what the check looks like.**
